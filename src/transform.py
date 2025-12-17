@@ -34,6 +34,16 @@ def transform_current_weather(
     if "time" in df.columns:
         df["time"] = pd.to_datetime(df["time"], utc=True)
 
+    # Rename columns for consistency
+    column_rename_map = {
+        "temperature_2m": "temperature",
+        "relative_humidity_2m": "relative_humidity",
+        "wind_speed_10m": "wind_speed",
+        "wind_direction_10m": "wind_direction",
+    }
+
+    df = df.rename(columns=column_rename_map)
+
     return df
 
 
@@ -55,6 +65,16 @@ def transform_hourly_forecast(
     # Convert timestamps
     if "time" in df.columns:
         df["time"] = pd.to_datetime(df["time"], utc=True)
+
+    # Rename columns for consistency
+    column_rename_map = {
+        "temperature_2m": "temperature",
+        "relative_humidity_2m": "relative_humidity",
+        "wind_speed_10m": "wind_speed",
+        "wind_direction_10m": "wind_direction",
+    }
+
+    df = df.rename(columns=column_rename_map)
 
     return df
 

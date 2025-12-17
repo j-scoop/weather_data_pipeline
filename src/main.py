@@ -1,6 +1,8 @@
 from datetime import datetime
 from ingest import fetch_weather_data
 from transform import transform_weather_data
+from validate import validate_weather_data
+from load import load_to_sqlite
 from pathlib import Path
 import yaml
 
@@ -23,6 +25,7 @@ def run_pipeline() -> None:
 
     print(f"Config loaded: {config}")
 
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
     RAW_DATA_DIR.mkdir(parents=True, exist_ok=True)
 
     for location in config["locations"]:
@@ -47,12 +50,26 @@ def run_pipeline() -> None:
             location_name=location_name,
         )
 
+        # Validate
+        validate_weather_data(
+            current_df=current_df,
+            hourly_df=hourly_df,
+        )
+
         print(
             f"Current rows: {len(current_df)} | "
             f"Hourly rows: {len(hourly_df)}"
         )
 
-    print("Pipeline run completed successfully.")
+        # Load
+        db_path = DATA_DIR / "weather.db"
+        load_to_sqlite(
+            current_df=current_df,
+            hourly_df=hourly_df,
+            db_path=db_path,
+        )
+
+    print("Pipeline completed successfully.")
 
 
 if __name__ == "__main__":
