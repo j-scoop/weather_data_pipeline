@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import requests
 import json
 import logging
@@ -14,7 +16,7 @@ def fetch_weather_data(
         hourly_params: List[str],
         current_params: List[str],
         forecast_days: int,
-        raw_data_dir: Path
+        raw_output_path: Path
     ) -> Path:
     """
     Ingest current and forecast weather data from Open-Meteo API for a single location.
@@ -64,27 +66,23 @@ def fetch_weather_data(
     response.raise_for_status()
     data = response.json()
 
-    timestamp = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
-    filename = f"{location_name}_{timestamp}_raw.json"
-    output_path = raw_data_dir / filename
-
-    raw_data_dir.mkdir(parents=True, exist_ok=True)
-
-    with output_path.open("w", encoding="utf-8") as f:
+    with raw_output_path.open("w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
     
     logging.info(
-        f"Raw weather data for {location_name} saved to {output_path}"
+        f"Raw weather data for {location_name} saved to {raw_output_path}"
     )
 
-    return output_path
+    # Returning this is redundant since we already have the path
+    # Remove later
+    return raw_output_path
 
-weather_data_file = fetch_weather_data(
-    location={"name": "Tokyo", "latitude": 35.7, "longitude": 139.7},
-    hourly_params=["temperature_2m", "relative_humidity_2m", "apparent_temperature", "precipitation", "rain", "cloud_cover", "wind_speed_10m", "wind_direction_10m"],
-    current_params=["temperature_2m", "relative_humidity_2m", "apparent_temperature", "precipitation", "rain", "cloud_cover", "wind_speed_10m", "wind_direction_10m"],
-    forecast_days=7,
-    raw_data_dir=Path("./raw_weather_data")
-)
+# weather_data_file = fetch_weather_data(
+#     location={"name": "Tokyo", "latitude": 35.7, "longitude": 139.7},
+#     hourly_params=["temperature_2m", "relative_humidity_2m", "apparent_temperature", "precipitation", "rain", "cloud_cover", "wind_speed_10m", "wind_direction_10m"],
+#     current_params=["temperature_2m", "relative_humidity_2m", "apparent_temperature", "precipitation", "rain", "cloud_cover", "wind_speed_10m", "wind_direction_10m"],
+#     forecast_days=7,
+#     raw_data_dir=Path("./data/raw_weather_data")
+# )
 
-print(f"Weather data saved to: {weather_data_file}")
+# logging.info(f"Weather data saved to: {weather_data_file}")

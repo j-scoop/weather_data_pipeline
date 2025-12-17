@@ -215,4 +215,4 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-raw_weather_data/
+data/

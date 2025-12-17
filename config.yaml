@@ -1,0 +1,33 @@
+# Weather data pipeline configuration
+
+api:
+  base_url: https://api.open-meteo.com/v1/forecast
+  hourly_variables:
+    - temperature_2m
+    - relative_humidity_2m
+    - apparent_temperature
+    - precipitation
+    - rain
+    - cloud_cover
+    - wind_speed_10m
+    - wind_direction_10m
+  current_variables:
+    - temperature_2m
+    - relative_humidity_2m
+    - apparent_temperature
+    - precipitation
+    - rain
+    - cloud_cover
+    - wind_speed_10m
+    - wind_direction_10m
+  forecast_days: 7
+
+locations:
+  - name: Tokyo
+    latitude: 35.6762
+    longitude: 139.6503
+
+  # Example of adding another location
+  # - name: London
+  #   latitude: 51.5074
+  #   longitude: -0.1278
