@@ -1,13 +1,14 @@
 from pathlib import Path
 
 import json
+import pandas as pd
 
 from src.transform import transform_weather_data
 
 
 def test_transform_weather_data_creates_expected_tables(tmp_path: Path):
     raw_json = {
-        "current_weather": {
+        "current": {
             "time": "2025-12-17T00:00",
             "temperature": 10.0,
             "windspeed": 5.0,
@@ -35,3 +36,6 @@ def test_transform_weather_data_creates_expected_tables(tmp_path: Path):
     assert len(hourly_df) == 2
     assert "temperature" in hourly_df.columns
     assert "wind_speed" in hourly_df.columns
+    # Check that time columns are datetime dtype
+    assert pd.api.types.is_datetime64_any_dtype(current_df["time"])
+    assert pd.api.types.is_datetime64_any_dtype(hourly_df["time"])
