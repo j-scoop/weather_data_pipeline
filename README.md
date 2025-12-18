@@ -2,7 +2,7 @@
 
 A lightweight, self-contained Python data pipeline that ingests weather data from a public API, validates and transforms it into an analytics-ready format, and stores the results locally in SQLite.
 
-This project is designed to demonstrate practical data engineering skills in a way that is easy to run, inspect, and extend — no cloud services or credentials required.
+This project is designed to demonstrate practical data engineering in a way that is easy to run, inspect, and extend. No cloud services or credentials required to run.
 
 ---
 

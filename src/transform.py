@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 import json
+import logging
 from pathlib import Path
 from typing import Tuple
 
 import pandas as pd
 
 
-WEATHER_JSON_FILE = Path("raw_weather_data/tokyo_20251217T033728Z_raw.json")
+logger = logging.getLogger(__name__)
 
 def load_raw_json(path: Path) -> dict:
     """Load raw weather JSON from disk."""
@@ -23,6 +24,9 @@ def transform_current_weather(
     """
     Transform current weather section into a single-row DataFrame.
     """
+
+    logging.info("Transforming current weather data")
+
     current = raw_data.get("current", {})
 
     df = pd.DataFrame([current])
@@ -44,6 +48,8 @@ def transform_current_weather(
 
     df = df.rename(columns=column_rename_map)
 
+    logging.info("Current weather data transformation complete")
+
     return df
 
 
@@ -55,6 +61,9 @@ def transform_hourly_forecast(
     """
     Transform hourly forecast section into a tabular DataFrame.
     """
+
+    logging.info("Transforming hourly forecast data")
+
     hourly = raw_data.get("hourly", {})
 
     df = pd.DataFrame(hourly)
@@ -75,6 +84,8 @@ def transform_hourly_forecast(
     }
 
     df = df.rename(columns=column_rename_map)
+
+    logging.info("Hourly forecast data transformation complete")
 
     return df
 

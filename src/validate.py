@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import logging
 from typing import Iterable
 
 import pandas as pd
 
+
+logger = logging.getLogger(__name__)
 
 class ValidationError(Exception):
     """Raised when data validation fails."""
@@ -14,6 +17,9 @@ def validate_required_columns(
     required_columns: Iterable[str],
     table_name: str,
 ) -> None:
+    """
+    Validate that required columns are present in the DataFrame.
+    """
     missing = set(required_columns) - set(df.columns)
     if missing:
         raise ValidationError(
@@ -25,11 +31,18 @@ def validate_dataframe_not_empty(
     df: pd.DataFrame,
     table_name: str,
 ) -> None:
+    """
+    Validate that the DataFrame contains data.
+    """
     if df.empty:
         raise ValidationError(f"{table_name}: DataFrame is empty")
 
 
 def validate_current_weather(df: pd.DataFrame) -> None:
+    """
+    Validate the current weather DataFrame, checking for
+    required columns and data types.
+    """
     table_name = "current_weather"
 
     validate_dataframe_not_empty(df, table_name)
@@ -62,6 +75,10 @@ def validate_current_weather(df: pd.DataFrame) -> None:
 
 
 def validate_hourly_forecast(df: pd.DataFrame) -> None:
+    """
+    Validate the hourly forecast DataFrame, checking for
+    required columns and data types.
+    """
     table_name = "hourly_forecast"
 
     validate_dataframe_not_empty(df, table_name)
@@ -99,5 +116,7 @@ def validate_weather_data(
     hourly_df: pd.DataFrame,
 ) -> None:
     """Run all weather data validations."""
+
+    logging.info("Validating transformed data")
     validate_current_weather(current_df)
     validate_hourly_forecast(hourly_df)

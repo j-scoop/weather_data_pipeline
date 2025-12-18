@@ -1,15 +1,27 @@
+from __future__ import annotations
+
 from datetime import datetime
-from ingest import fetch_weather_data
-from transform import transform_weather_data
-from validate import validate_weather_data
-from load import load_to_sqlite
 from pathlib import Path
+import logging
+
 import yaml
+
+from src.ingest import fetch_weather_data
+from src.transform import transform_weather_data
+from src.validate import validate_weather_data
+from src.load import load_to_sqlite
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = PROJECT_ROOT / "data"
 RAW_DATA_DIR = DATA_DIR / "raw"
+
+def setup_logging(level: int = logging.INFO) -> None:
+    logging.basicConfig(
+        level=level,
+        format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
 
 
 def load_config(config_path: Path) -> dict:
@@ -20,10 +32,13 @@ def load_config(config_path: Path) -> dict:
 
 def run_pipeline() -> None:
     """Run the weather data ingestion and transformation pipeline."""
+
+    setup_logging()
+
     config_path = PROJECT_ROOT / "config.yaml"
     config = load_config(config_path)
 
-    print(f"Config loaded: {config}")
+    logging.info(f"Config loaded: {config}")
 
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     RAW_DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -34,7 +49,7 @@ def run_pipeline() -> None:
         output_filename = f"{location_name}_{timestamp}_raw.json"
         raw_output_path = RAW_DATA_DIR / output_filename
 
-        print(f"Processing location: {location['name']}")
+        logging.info(f"Processing location: {location['name']}")
         # Ingest
         fetch_weather_data(
             location=location,
@@ -56,7 +71,7 @@ def run_pipeline() -> None:
             hourly_df=hourly_df,
         )
 
-        print(
+        logging.info(
             f"Current rows: {len(current_df)} | "
             f"Hourly rows: {len(hourly_df)}"
         )
@@ -69,7 +84,7 @@ def run_pipeline() -> None:
             db_path=db_path,
         )
 
-    print("Pipeline completed successfully.")
+    logging.info("Pipeline completed successfully.")
 
 
 if __name__ == "__main__":
